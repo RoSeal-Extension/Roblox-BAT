@@ -6,15 +6,15 @@
     "roblox",
     "api"
   ],
-  "author": "Julli4n",
-  "homepage": "https://github.com/Julli4n/roblox-bat",
+  "author": "juliaoverflow",
+  "homepage": "https://github.com/RoSeal-Extension/Roblox-BAT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:Julli4n/roblox-bat.git"
+    "url": "git@github.com:RoSeal-Extension/Roblox-BAT.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Julli4n/roblox-bat/issues"
+    "url": "https://github.com/RoSeal-Extension/Roblox-BAT/issues"
   },
   "main": "./script/mod.js",
   "module": "./esm/mod.js",
