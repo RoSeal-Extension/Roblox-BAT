@@ -13,14 +13,14 @@ await build({
         name: "roblox-bat",
         description: "A Deno/NodeJS module to generate Roblox BAT tokens for extensions",
         version: "0.5.1",
-        homepage: "https://github.com/Julli4n/roblox-bat",
-        author: "Julli4n",
+        homepage: "https://github.com/RoSeal-Extension/Roblox-BAT",
+        author: "juliaoverflow",
         bugs: {
-            url: "https://github.com/Julli4n/roblox-bat/issues",
+            url: "https://github.com/RoSeal-Extension/Roblox-BAT/issues",
         },
         repository: {
             type: "git",
-            url: "git@github.com:Julli4n/roblox-bat.git",
+            url: "git@github.com:RoSeal-Extension/Roblox-BAT.git",
         },
         keywords: [
             "roblox",
