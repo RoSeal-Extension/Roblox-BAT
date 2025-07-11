@@ -21,7 +21,7 @@ function arrayBufferToBase64String(arrayBuffer) {
     return btoa(res);
 }
 async function signWithKey(privateKey, data) {
-    const bufferResult = await crypto.subtle.sign(constants_js_1.TOKEN_SIGNATURE_ALGORITHM, privateKey, new TextEncoder().encode(data).buffer);
+    const bufferResult = await crypto.subtle.sign(constants_js_1.TOKEN_SIGNATURE_ALGORITHM, privateKey, new TextEncoder().encode(data));
     return arrayBufferToBase64String(bufferResult);
 }
 function doesDatabaseExist(dbName) {
