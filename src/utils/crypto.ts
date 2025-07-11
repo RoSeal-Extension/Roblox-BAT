@@ -21,7 +21,7 @@ export async function signWithKey(privateKey: CryptoKey, data: string): Promise<
     const bufferResult = await crypto.subtle.sign(
         TOKEN_SIGNATURE_ALGORITHM,
         privateKey,
-        new TextEncoder().encode(data).buffer,
+        new TextEncoder().encode(data),
     );
 
     return arrayBufferToBase64String(bufferResult);
