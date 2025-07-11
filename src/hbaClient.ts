@@ -357,7 +357,7 @@ export class HBAClient {
         }
 
         const hashedBody = await hashStringSha256(strBody);
-        const payloadToSign = [
+        const payload1 = [
             hashedBody,
             timestamp,
             requestUrl.toString(),
@@ -365,9 +365,15 @@ export class HBAClient {
         ].join(
             AUTH_TOKEN_SEPARATOR,
         );
-        const signature = await signWithKey(pair.privateKey, payloadToSign);
+        const payload2 = ["", timestamp, requestUrl.toString(), requestMethod.toUpperCase()].join(
+            AUTH_TOKEN_SEPARATOR,
+        );
+        const signatures = await Promise.all([
+            signWithKey(pair.privateKey, payload1),
+            signWithKey(pair.privateKey, payload2),
+        ]);
 
-        return [BAT_SIGNATURE_VERSION, hashedBody, timestamp, signature].join(
+        return [BAT_SIGNATURE_VERSION, hashedBody, timestamp, signatures[0], signatures[1]].join(
             AUTH_TOKEN_SEPARATOR,
         );
     }

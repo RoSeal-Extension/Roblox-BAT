@@ -22,7 +22,7 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: v2.x
 
       # Some of this is from https://github.com/discordeno/discordeno/blob/main/.github/workflows/release.yml
       - name: Setup Node
@@ -39,7 +39,7 @@ jobs:
         run: deno publish
         
       - name: Build npm folder
-        run: deno run -A --unstable ./scripts/dnt.ts
+        run: deno run -A ./scripts/dnt.ts
         
       - name: Remove node_modules
         run: rm -rf npm/node_modules

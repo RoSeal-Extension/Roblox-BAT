@@ -1,5 +1,5 @@
-import { copy } from "jsr:@std/fs@1.0.6";
-import { build } from "jsr:@deno/dnt@0.41.3";
+import { copy } from "jsr:@std/fs@1.0.19";
+import { build } from "jsr:@deno/dnt@0.42.1";
 
 await build({
     entryPoints: ["./mod.ts"],
@@ -12,7 +12,7 @@ await build({
     package: {
         name: "roblox-bat",
         description: "A Deno/NodeJS module to generate Roblox BAT tokens for extensions",
-        version: "0.5.1",
+        version: "0.6.0",
         homepage: "https://github.com/RoSeal-Extension/Roblox-BAT",
         author: "juliaoverflow",
         bugs: {
@@ -31,5 +31,5 @@ await build({
     typeCheck: false,
 });
 
-await copy("./README.md", "./npm/README.md");
-await copy("./LICENSE", "./npm/LICENSE");
+await copy("./README.md", "./npm/README.md").catch(() => {});
+await copy("./LICENSE", "./npm/LICENSE").catch(() => {});
