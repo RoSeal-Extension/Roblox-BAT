@@ -252,14 +252,18 @@ class HBAClient {
             strBody = body;
         }
         const hashedBody = await (0, crypto_js_1.hashStringSha256)(strBody);
-        const payloadToSign = [
+        const payload1 = [
             hashedBody,
             timestamp,
             requestUrl.toString(),
             requestMethod.toUpperCase(),
         ].join(constants_js_1.AUTH_TOKEN_SEPARATOR);
-        const signature = await (0, crypto_js_1.signWithKey)(pair.privateKey, payloadToSign);
-        return [constants_js_1.BAT_SIGNATURE_VERSION, hashedBody, timestamp, signature].join(constants_js_1.AUTH_TOKEN_SEPARATOR);
+        const payload2 = ["", timestamp, requestUrl.toString(), requestMethod.toUpperCase()].join(constants_js_1.AUTH_TOKEN_SEPARATOR);
+        const signatures = await Promise.all([
+            (0, crypto_js_1.signWithKey)(pair.privateKey, payload1),
+            (0, crypto_js_1.signWithKey)(pair.privateKey, payload2),
+        ]);
+        return [constants_js_1.BAT_SIGNATURE_VERSION, hashedBody, timestamp, signatures[0], signatures[1]].join(constants_js_1.AUTH_TOKEN_SEPARATOR);
     }
     /**
      * Check whether the URL is supported for bound auth tokens.
