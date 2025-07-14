@@ -183,7 +183,9 @@ export class HBAClient {
             ) {
                 const text = await this.fetch(this.urls.fetchTokenMetadataUrl).then((res) =>
                     res.text()
-                );
+                ).catch(() => {});
+                if (!text) return null;
+                
                 if (
                     !canUseDoc
                 ) {
