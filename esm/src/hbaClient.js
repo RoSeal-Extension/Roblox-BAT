@@ -33,7 +33,7 @@ export class HBAClient {
         return (this._fetchFn ?? fetch)(url, init);
     }
     /**
-     * Generate the base headers required, it may be empty or only include `x-bound-auth-token`
+     * Generate the base headers required, it may empty if the keys could not be retrieved, or only include `x-bound-auth-token`.
      * @param requestUrl - The target request URL, will be checked if it's supported for HBA.
      * @param requestMethod  - The target request method
      * @param body - The request body. If the method does not support a body, leave it undefined.
@@ -74,7 +74,9 @@ export class HBAClient {
                 !document.querySelector?.(FETCH_TOKEN_METADATA_SELECTOR) ||
                 (!document.querySelector?.(FETCH_USER_DATA_SELECTOR) &&
                     document?.readyState === "loading")) {
-                const text = await this.fetch(this.urls.fetchTokenMetadataUrl).then((res) => res.text());
+                const text = await this.fetch(this.urls.fetchTokenMetadataUrl).then((res) => res.text()).catch(() => { });
+                if (!text)
+                    return null;
                 if (!canUseDoc) {
                     const match = text.match(FETCH_TOKEN_METADATA_REGEX);
                     if (!match) {
@@ -207,16 +209,29 @@ export class HBAClient {
         return promise;
     }
     /**
-     * Generate the bound auth token given a body.
+     * Only sign the parameters given by a previous client for BAT.
      * @param requestUrl - The request URL
      * @param requestMethod  - The request method
      * @param body - The request body. If the method does not support a body, leave it undefined.
      */
-    async generateBAT(requestUrl, requestMethod = "GET", body) {
+    async signBATData([hashedBody, timestamp, payload1, payload2]) {
         const pair = await this.getCryptoKeyPair();
         if (!pair?.privateKey) {
             return null;
         }
+        const signatures = await Promise.all([
+            signWithKey(pair.privateKey, payload1),
+            signWithKey(pair.privateKey, payload2),
+        ]);
+        return [BAT_SIGNATURE_VERSION, hashedBody, timestamp, signatures[0], signatures[1]].join(AUTH_TOKEN_SEPARATOR);
+    }
+    /**
+     * Generate parameters to give to another client to complete signing for BAT.
+     * @param requestUrl - The request URL
+     * @param requestMethod  - The request method
+     * @param body - The request body. If the method does not support a body, leave it undefined.
+     */
+    async generateUnsignedBAT(requestUrl, requestMethod = "GET", body) {
         const timestamp = Math.floor(Date.now() / 1000).toString();
         let strBody;
         if (typeof body === "object") {
@@ -233,11 +248,20 @@ export class HBAClient {
             requestMethod.toUpperCase(),
         ].join(AUTH_TOKEN_SEPARATOR);
         const payload2 = ["", timestamp, requestUrl.toString(), requestMethod.toUpperCase()].join(AUTH_TOKEN_SEPARATOR);
-        const signatures = await Promise.all([
-            signWithKey(pair.privateKey, payload1),
-            signWithKey(pair.privateKey, payload2),
-        ]);
-        return [BAT_SIGNATURE_VERSION, hashedBody, timestamp, signatures[0], signatures[1]].join(AUTH_TOKEN_SEPARATOR);
+        return [hashedBody, timestamp, payload1, payload2];
+    }
+    /**
+     * Generate the bound auth token given the parameters.
+     * @param requestUrl - The request URL
+     * @param requestMethod  - The request method
+     * @param body - The request body. If the method does not support a body, leave it undefined.
+     */
+    async generateBAT(requestUrl, requestMethod = "GET", body) {
+        const pair = await this.getCryptoKeyPair();
+        if (!pair?.privateKey) {
+            return null;
+        }
+        return await this.signBATData(await this.generateUnsignedBAT(requestUrl, requestMethod, body));
     }
     /**
      * Check whether the URL is supported for bound auth tokens.

@@ -1,3 +1,7 @@
+/**
+ * Unsinged BAT array
+ */
+export type UnsignedBAT = [string, string, string, string];
 export type HBAClientConstProps = {
     /**
      * The fetch to be used when fetching metadata.
@@ -80,7 +84,7 @@ export declare class HBAClient {
      */
     fetch(url: string, params?: RequestInit): Promise<Response>;
     /**
-     * Generate the base headers required, it may be empty or only include `x-bound-auth-token`
+     * Generate the base headers required, it may empty if the keys could not be retrieved, or only include `x-bound-auth-token`.
      * @param requestUrl - The target request URL, will be checked if it's supported for HBA.
      * @param requestMethod  - The target request method
      * @param body - The request body. If the method does not support a body, leave it undefined.
@@ -97,7 +101,21 @@ export declare class HBAClient {
      */
     getCryptoKeyPair(uncached?: boolean): Promise<CryptoKeyPair | null>;
     /**
-     * Generate the bound auth token given a body.
+     * Only sign the parameters given by a previous client for BAT.
+     * @param requestUrl - The request URL
+     * @param requestMethod  - The request method
+     * @param body - The request body. If the method does not support a body, leave it undefined.
+     */
+    signBATData([hashedBody, timestamp, payload1, payload2]: UnsignedBAT): Promise<string | null>;
+    /**
+     * Generate parameters to give to another client to complete signing for BAT.
+     * @param requestUrl - The request URL
+     * @param requestMethod  - The request method
+     * @param body - The request body. If the method does not support a body, leave it undefined.
+     */
+    generateUnsignedBAT(requestUrl: string | URL, requestMethod?: string, body?: unknown): Promise<UnsignedBAT>;
+    /**
+     * Generate the bound auth token given the parameters.
      * @param requestUrl - The request URL
      * @param requestMethod  - The request method
      * @param body - The request body. If the method does not support a body, leave it undefined.
