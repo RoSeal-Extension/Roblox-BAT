@@ -1,62 +1,62 @@
 name: Publish on JSR/NPM
 
 on:
-  push:
-    branches: [main]
-  release:
-    types: [created]
+    push:
+        branches: [main]
+    release:
+        types: [created]
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+    build:
+        name: Build
+        runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-      id-token: write
+        permissions:
+            contents: write
+            id-token: write
 
-    steps:
-      - name: Setup Repo
-        uses: actions/checkout@v4
+        steps:
+            - name: Setup Repo
+              uses: actions/checkout@v4
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v2.x
+            - name: Setup Deno
+              uses: denoland/setup-deno@v1
+              with:
+                  deno-version: v2.x
 
-      # Some of this is from https://github.com/discordeno/discordeno/blob/main/.github/workflows/release.yml
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'latest'
-          registry-url: 'https://registry.npmjs.org'
+            # Some of this is from https://github.com/discordeno/discordeno/blob/main/.github/workflows/release.yml
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "latest"
+                  registry-url: "https://registry.npmjs.org"
 
-      - name: Deno Lint
-        run: deno lint
+            - name: Deno Lint
+              run: deno lint
 
-      - name: Publish on JSR
-        if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
-        run: deno publish
-        
-      - name: Build npm folder
-        run: deno run -A ./scripts/dnt.ts
-        
-      - name: Remove node_modules
-        run: rm -rf npm/node_modules
+            - name: Publish on JSR
+              if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
+              run: deno publish
 
-      # Branch can be used for dev builds
-      - name: Push to Node branch
-        uses: s0/git-publish-subdir-action@develop
-        env:
-          REPO: self
-          BRANCH: node
-          FOLDER: npm
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "Build: ({sha}) {msg}"
-  
-      # Only used if it's triggered from a release
-      - name: Publish on NPM
-        if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: cd npm && npm publish --access public
+            - name: Build npm folder
+              run: deno run -A ./scripts/dnt.ts
+
+            - name: Remove node_modules
+              run: rm -rf npm/node_modules
+
+            # Branch can be used for dev builds
+            - name: Push to Node branch
+              uses: s0/git-publish-subdir-action@develop
+              env:
+                  REPO: self
+                  BRANCH: node
+                  FOLDER: npm
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  MESSAGE: "Build: ({sha}) {msg}"
+
+            # Only used if it's triggered from a release
+            - name: Publish on NPM
+              if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: cd npm && npm publish --access public
