@@ -1,5 +1,5 @@
-import { copy } from "jsr:@std/fs@1.0.19";
-import { build } from "jsr:@deno/dnt@0.42.1";
+import { copy } from "@std/fs";
+import { build } from "@deno/dnt";
 
 await build({
     entryPoints: ["./mod.ts"],
