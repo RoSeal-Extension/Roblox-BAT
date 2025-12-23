@@ -69,6 +69,24 @@ class HBAClient {
         return (this._fetchFn ?? fetch)(url, init);
     }
     /**
+   * Generate the base headers required given unsigned BAT data, it may empty if the keys could not be retrieved, or only include `x-bound-auth-token`.
+   * @param requestUrl - The target request URL, will be checked if it's supported for HBA.
+   * @param requestMethod  - The target request method
+   * @param data - Unsigned BAT data obtained from another client.
+   */
+    async generateBaseHeadersFromUnsignedBAT(requestUrl, includeCredentials, data) {
+        if (!await this.isUrlIncludedInWhitelist(requestUrl, includeCredentials)) {
+            return {};
+        }
+        const token = await this.signBATData(data);
+        if (!token) {
+            return {};
+        }
+        return {
+            [constants_js_1.TOKEN_HEADER_NAME]: token,
+        };
+    }
+    /**
      * Generate the base headers required, it may empty if the keys could not be retrieved, or only include `x-bound-auth-token`.
      * @param requestUrl - The target request URL, will be checked if it's supported for HBA.
      * @param requestMethod  - The target request method
