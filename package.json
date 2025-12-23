@@ -1,6 +1,6 @@
 {
   "name": "roblox-bat",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A Deno/NodeJS module to generate Roblox BAT tokens for extensions",
   "keywords": [
     "roblox",
