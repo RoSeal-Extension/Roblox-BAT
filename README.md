@@ -1,8 +1,14 @@
 ## roblox-bat
 
-Handles `x-bound-auth-token` generation for extensions. It will be enforced on some endpoints by the
-end of June 2024 at the latest. (via
-[DevForum](https://devforum.roblox.com/t/introducing-account-session-protection/2668306/179))
+Handles `x-bound-auth-token` generation for extensions.
+
+> [!IMPORTANT]
+> If you extract credentials from the Roblox app, or handle authentication with Roblox.com in your
+> application without `secureAuthenticationIntent` in the login request model, you do not need to
+> use this library. It is primarily intended for extensions and some applications.
+
+As of 2026, it is unknown when enforcement will begin again. DevForum post:
+https://devforum.roblox.com/t/introducing-account-session-protection/2668306
 
 ## What is `x-bound-auth-token`
 
