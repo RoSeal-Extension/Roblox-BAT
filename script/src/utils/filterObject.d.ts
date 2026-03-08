@@ -1,3 +1,1 @@
-export declare function filterObject(obj: Record<string, unknown>): {
-    [k: string]: unknown;
-};
+export declare function filterObject(obj: Record<string, unknown>): Record<string, unknown>;

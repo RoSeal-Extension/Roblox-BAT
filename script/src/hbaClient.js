@@ -69,11 +69,11 @@ class HBAClient {
         return (this._fetchFn ?? fetch)(url, init);
     }
     /**
-   * Generate the base headers required given unsigned BAT data, it may empty if the keys could not be retrieved, or only include `x-bound-auth-token`.
-   * @param requestUrl - The target request URL, will be checked if it's supported for HBA.
-   * @param requestMethod  - The target request method
-   * @param data - Unsigned BAT data obtained from another client.
-   */
+     * Generate the base headers required given unsigned BAT data, it may empty if the keys could not be retrieved, or only include `x-bound-auth-token`.
+     * @param requestUrl - The target request URL, will be checked if it's supported for HBA.
+     * @param requestMethod  - The target request method
+     * @param data - Unsigned BAT data obtained from another client.
+     */
     async generateBaseHeadersFromUnsignedBAT(requestUrl, includeCredentials, data) {
         if (!await this.isUrlIncludedInWhitelist(requestUrl, includeCredentials)) {
             return {};
@@ -410,9 +410,7 @@ class HBAClient {
         }
         if (headers) {
             // @ts-ignore: fine
-            this.headers = headers instanceof Headers
-                ? Object.fromEntries(headers.entries())
-                : headers;
+            this.headers = headers instanceof Headers ? Object.fromEntries(headers) : headers;
         }
         if (urls) {
             for (const key in urls) {
