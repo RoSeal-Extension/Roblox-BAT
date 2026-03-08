@@ -4,7 +4,7 @@
     "exports": "./mod.ts",
     "imports": {
         "@deno/dnt": "jsr:@deno/dnt@0.42.3",
-        "@std/fs": "jsr:@std/fs@1.0.20"
+        "@std/fs": "jsr:@std/fs@1.0.23"
     },
     "compilerOptions": {
         "lib": [

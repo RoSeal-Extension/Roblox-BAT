@@ -133,17 +133,21 @@ export class HBAClient {
         return (this._fetchFn ?? fetch)(url, init);
     }
 
-      /**
+    /**
      * Generate the base headers required given unsigned BAT data, it may empty if the keys could not be retrieved, or only include `x-bound-auth-token`.
      * @param requestUrl - The target request URL, will be checked if it's supported for HBA.
      * @param requestMethod  - The target request method
      * @param data - Unsigned BAT data obtained from another client.
      */
-    public async generateBaseHeadersFromUnsignedBAT(requestUrl: string | URL, includeCredentials: boolean, data: UnsignedBAT): Promise<Record<string, string>> {
+    public async generateBaseHeadersFromUnsignedBAT(
+        requestUrl: string | URL,
+        includeCredentials: boolean,
+        data: UnsignedBAT,
+    ): Promise<Record<string, string>> {
         if (!await this.isUrlIncludedInWhitelist(requestUrl, includeCredentials)) {
             return {};
         }
-        
+
         const token = await this.signBATData(data);
         if (!token) {
             return {};
@@ -153,7 +157,6 @@ export class HBAClient {
             [TOKEN_HEADER_NAME]: token,
         };
     }
-    
 
     /**
      * Generate the base headers required, it may empty if the keys could not be retrieved, or only include `x-bound-auth-token`.
@@ -437,7 +440,9 @@ export class HBAClient {
             return null;
         }
 
-        return await this.signBATData(await this.generateUnsignedBAT(requestUrl, requestMethod, body));
+        return await this.signBATData(
+            await this.generateUnsignedBAT(requestUrl, requestMethod, body),
+        );
     }
 
     /**
@@ -491,9 +496,7 @@ export class HBAClient {
         }
         if (headers) {
             // @ts-ignore: fine
-            this.headers = headers instanceof Headers
-                ? Object.fromEntries(headers.entries())
-                : headers;
+            this.headers = headers instanceof Headers ? Object.fromEntries(headers) : headers;
         }
 
         if (urls) {

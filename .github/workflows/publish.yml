@@ -1,5 +1,9 @@
 name: Publish on JSR/NPM
 
+permissions:
+    contents: write
+    id-token: write
+
 on:
     push:
         branches: [main]
@@ -10,10 +14,6 @@ jobs:
     build:
         name: Build
         runs-on: ubuntu-latest
-
-        permissions:
-            contents: write
-            id-token: write
 
         steps:
             - name: Setup Repo
@@ -57,4 +57,4 @@ jobs:
             # Only used if it's triggered from a release
             - name: Publish on NPM
               if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
-              run: cd npm && npm publish --access public
+              run: cd npm && npm publish --access public --provenance

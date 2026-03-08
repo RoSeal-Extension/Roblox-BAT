@@ -1,6 +1,6 @@
 ## roblox-bat
 
-Handles `x-bound-auth-token` generation for extensions.
+Handles `x-bound-auth-token` generation for extension sand some other types of applications.
 
 > [!IMPORTANT]
 > If you extract credentials from the Roblox app, or handle authentication with Roblox.com in your
@@ -45,7 +45,7 @@ const hbaClient = new HBAClient({
 ```
 
 In server-side runtimes (Bun, NodeJS, Deno), you will have to supply the key yourself or generate
-one:
+one BEFORE authentication:
 
 ```ts
 const hbaClient = new HBAClient({
