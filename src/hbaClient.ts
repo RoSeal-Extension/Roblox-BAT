@@ -12,7 +12,12 @@ import {
     FETCH_USER_DATA_SELECTOR,
     TOKEN_HEADER_NAME,
 } from "./utils/constants.ts";
-import { getCryptoKeyPairFromDB, hashStringSha256, signWithKey } from "./utils/crypto.ts";
+import {
+    arrayBufferToBase64String,
+    getCryptoKeyPairFromDB,
+    hashStringSha256,
+    signWithKey,
+} from "./utils/crypto.ts";
 import { filterObject } from "./utils/filterObject.ts";
 
 /**
@@ -66,6 +71,13 @@ export type TokenMetadata = {
     hbaIndexedDbKeyName: string;
     hbaIndexedDbVersion: number;
     isAuthenticated: boolean;
+};
+
+export type SecureAuthenticationIntent = {
+    clientPublicKey: string;
+    clientEpochTimestamp: number;
+    saiSignature: string;
+    serverNonce: string;
 };
 
 export type HBAUrlConfig = {
@@ -180,6 +192,38 @@ export class HBAClient {
 
         return {
             [TOKEN_HEADER_NAME]: token,
+        };
+    }
+
+    /**
+     * Generate the secure authentication intent parameters given the server nonce. This is used for authentication flow.
+     * @param serverNonce The nonce fetched from the server
+     * @returns
+     */
+    public async createSecureAuthenticationIntent(
+        serverNonce: string,
+    ): Promise<SecureAuthenticationIntent | null> {
+        const pair = await this.getCryptoKeyPair();
+        if (!pair?.privateKey) {
+            return null;
+        }
+
+        const exportedPublicKey = arrayBufferToBase64String(
+            await crypto.subtle.exportKey("spki", pair.publicKey),
+        );
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        const payload = [exportedPublicKey, timestamp, serverNonce].join(
+            AUTH_TOKEN_SEPARATOR,
+        );
+        
+        const signature = await signWithKey(pair.privateKey, payload);
+
+        return {
+            clientPublicKey: exportedPublicKey,
+            clientEpochTimestamp: timestamp,
+            saiSignature: signature,
+            serverNonce,
         };
     }
 
