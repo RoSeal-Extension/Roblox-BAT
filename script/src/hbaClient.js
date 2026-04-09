@@ -105,6 +105,27 @@ class HBAClient {
         };
     }
     /**
+     * Generate the secure authentication intent parameters given the server nonce. This is used for authentication flow.
+     * @param serverNonce The nonce fetched from the server
+     * @returns
+     */
+    async createSecureAuthenticationIntent(serverNonce) {
+        const pair = await this.getCryptoKeyPair();
+        if (!pair?.privateKey) {
+            return null;
+        }
+        const exportedPublicKey = (0, crypto_js_1.arrayBufferToBase64String)(await crypto.subtle.exportKey("spki", pair.publicKey));
+        const timestamp = Math.floor(Date.now() / 1000);
+        const payload = [exportedPublicKey, timestamp, serverNonce].join(constants_js_1.AUTH_TOKEN_SEPARATOR);
+        const signature = await (0, crypto_js_1.signWithKey)(pair.privateKey, payload);
+        return {
+            clientPublicKey: exportedPublicKey,
+            clientEpochTimestamp: timestamp,
+            saiSignature: signature,
+            serverNonce,
+        };
+    }
+    /**
      * Get HBA token metadata.
      * @param uncached - Whether it should fetch uncached.
      */

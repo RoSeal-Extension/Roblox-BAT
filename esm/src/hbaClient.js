@@ -1,6 +1,6 @@
 import * as dntShim from "../_dnt.shims.js";
 import { AUTH_TOKEN_SEPARATOR, BAT_SIGNATURE_VERSION, decodeEntities, DEFAULT_FETCH_TOKEN_METADATA_URL, DEFAULT_FORCE_BAT_URLS, DEFAULT_INDEXED_DB_VERSION, DEFAULT_MATCH_ROBLOX_URL_BASE, FETCH_TOKEN_METADATA_REGEX, FETCH_TOKEN_METADATA_SELECTOR, FETCH_USER_DATA_REGEX, FETCH_USER_DATA_SELECTOR, TOKEN_HEADER_NAME, } from "./utils/constants.js";
-import { getCryptoKeyPairFromDB, hashStringSha256, signWithKey } from "./utils/crypto.js";
+import { arrayBufferToBase64String, getCryptoKeyPairFromDB, hashStringSha256, signWithKey, } from "./utils/crypto.js";
 import { filterObject } from "./utils/filterObject.js";
 /**
  * Hardware-backed authentication client. This handles generating the headers required.
@@ -66,6 +66,27 @@ export class HBAClient {
         }
         return {
             [TOKEN_HEADER_NAME]: token,
+        };
+    }
+    /**
+     * Generate the secure authentication intent parameters given the server nonce. This is used for authentication flow.
+     * @param serverNonce The nonce fetched from the server
+     * @returns
+     */
+    async createSecureAuthenticationIntent(serverNonce) {
+        const pair = await this.getCryptoKeyPair();
+        if (!pair?.privateKey) {
+            return null;
+        }
+        const exportedPublicKey = arrayBufferToBase64String(await crypto.subtle.exportKey("spki", pair.publicKey));
+        const timestamp = Math.floor(Date.now() / 1000);
+        const payload = [exportedPublicKey, timestamp, serverNonce].join(AUTH_TOKEN_SEPARATOR);
+        const signature = await signWithKey(pair.privateKey, payload);
+        return {
+            clientPublicKey: exportedPublicKey,
+            clientEpochTimestamp: timestamp,
+            saiSignature: signature,
+            serverNonce,
         };
     }
     /**

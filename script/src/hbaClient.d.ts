@@ -46,6 +46,12 @@ export type TokenMetadata = {
     hbaIndexedDbVersion: number;
     isAuthenticated: boolean;
 };
+export type SecureAuthenticationIntent = {
+    clientPublicKey: string;
+    clientEpochTimestamp: number;
+    saiSignature: string;
+    serverNonce: string;
+};
 export type HBAUrlConfig = {
     /**
      * The URL to fetch token metadata from.
@@ -97,6 +103,12 @@ export declare class HBAClient {
      * @param body - The request body. If the method does not support a body, leave it undefined.
      */
     generateBaseHeaders(requestUrl: string | URL, requestMethod?: string, includeCredentials?: boolean, body?: unknown): Promise<Record<string, string>>;
+    /**
+     * Generate the secure authentication intent parameters given the server nonce. This is used for authentication flow.
+     * @param serverNonce The nonce fetched from the server
+     * @returns
+     */
+    createSecureAuthenticationIntent(serverNonce: string): Promise<SecureAuthenticationIntent | null>;
     /**
      * Get HBA token metadata.
      * @param uncached - Whether it should fetch uncached.
