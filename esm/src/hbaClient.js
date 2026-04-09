@@ -73,7 +73,7 @@ export class HBAClient {
      * @param serverNonce The nonce fetched from the server
      * @returns
      */
-    async createSecureAuthenticationIntent(serverNonce) {
+    async generateSAIObject(serverNonce) {
         const pair = await this.getCryptoKeyPair();
         if (!pair?.privateKey) {
             return null;

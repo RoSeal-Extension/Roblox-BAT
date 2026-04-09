@@ -108,7 +108,7 @@ export declare class HBAClient {
      * @param serverNonce The nonce fetched from the server
      * @returns
      */
-    createSecureAuthenticationIntent(serverNonce: string): Promise<SecureAuthenticationIntent | null>;
+    generateSAIObject(serverNonce: string): Promise<SecureAuthenticationIntent | null>;
     /**
      * Get HBA token metadata.
      * @param uncached - Whether it should fetch uncached.
