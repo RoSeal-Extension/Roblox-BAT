@@ -22,8 +22,8 @@
     "exports": {
         ".": {
             "import": {
-                "types": "./dist/hbaClient.d.ts",
-                "default": "./dist/hbaClient.js"
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
             }
         },
         "./package.json": "./package.json"
@@ -34,6 +34,6 @@
         "@biomejs/biome": "latest"
     },
     "scripts": {
-        "build": "bunx bunup src/hbaClient.ts --silent"
+        "build": "bunx bunup src/index.ts --silent"
     }
 }

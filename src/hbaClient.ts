@@ -606,5 +606,3 @@ export class HBAClient {
 		}
 	}
 }
-
-export { FETCH_TOKEN_METADATA_SELECTOR, TOKEN_HEADER_NAME };
