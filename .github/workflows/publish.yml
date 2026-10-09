@@ -1,60 +1,37 @@
-name: Publish on JSR/NPM
+name: Publish on NPM/JSR
 
 permissions:
-    contents: write
-    id-token: write
+  id-token: write
+  contents: read
 
 on:
-    push:
-        branches: [main]
-    release:
-        types: [created]
+  push:
+    branches: [main]
+  release:
+    types: [created]
 
 jobs:
-    build:
-        name: Build
-        runs-on: ubuntu-latest
+  build:
+    name: Build
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Setup Repo
-              uses: actions/checkout@v5
+    steps:
+      - name: Setup Repo
+        uses: actions/checkout@v7
 
-            - name: Setup Deno
-              uses: denoland/setup-deno@v2
-              with:
-                  deno-version: v2.x
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with: 
+          node-version: 26
 
-            # Some of this is from https://github.com/discordeno/discordeno/blob/main/.github/workflows/release.yml
-            - name: Setup Node
-              uses: actions/setup-node@v6
-              with:
-                  node-version: "latest"
-                  registry-url: "https://registry.npmjs.org"
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
-            - name: Deno Lint
-              run: deno lint
-
-            - name: Publish on JSR
-              if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
-              run: deno publish
-
-            - name: Build npm folder
-              run: deno run -A ./scripts/dnt.ts
-
-            - name: Remove node_modules
-              run: rm -rf npm/node_modules
-
-            # Branch can be used for dev builds
-            - name: Push to Node branch
-              uses: s0/git-publish-subdir-action@develop
-              env:
-                  REPO: self
-                  BRANCH: node
-                  FOLDER: npm
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  MESSAGE: "Build: ({sha}) {msg}"
-
-            # Only used if it's triggered from a release
-            - name: Publish on NPM
-              if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
-              run: cd npm && npm publish --access public --provenance
+      - name: Publish on NPM
+        if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
+        run: bun run build && npm publish --access public --provenance
+        
+      - name: Publish on JSR
+        if: github.event_name == 'release' && github.repository == 'RoSeal-Extension/Roblox-BAT'
+        run: bunx jsr publish --allow-slow-types --allow-dirty
+      

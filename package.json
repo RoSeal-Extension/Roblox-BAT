@@ -1,0 +1,39 @@
+{
+    "name": "roblox-bat",
+    "description": "A Deno/NodeJS module to generate Roblox BAT tokens for extensions",
+    "version": "0.6.5",
+    "type": "module",
+    "license": "MIT",
+    "homepage": "https://github.com/RoSeal-Extension/Roblox-BAT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/RoSeal-Extension/Roblox-BAT.git"
+    },
+    "bugs": {
+        "url": "https://github.com/RoSeal-Extension/Roblox-BAT/issues"
+    },
+    "keywords": [
+        "roblox",
+        "api"
+    ],
+    "files": [
+        "dist"
+    ],
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/hbaClient.d.ts",
+                "default": "./dist/hbaClient.js"
+            }
+        },
+        "./package.json": "./package.json"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "typescript": "latest",
+        "@biomejs/biome": "latest"
+    },
+    "scripts": {
+        "build": "bunx bunup src/hbaClient.ts --silent"
+    }
+}

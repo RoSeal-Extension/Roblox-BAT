@@ -1,14 +1,8 @@
 {
-    "deno.enable": true,
-    "deno.config": "./deno.jsonc",
-    "deno.suggest.imports.autoDiscover": false,
-    "deno.unstable": true,
-    "editor.inlayHints.enabled": "off",
-    "editor.defaultFormatter": "denoland.vscode-deno",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.organizeImports": "explicit",
-        "source.fixAll": "explicit"
-    },
-    "workbench.tree.indent": 20
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "explicit",
+		"source.fixAll": "explicit"
+	},
 }
